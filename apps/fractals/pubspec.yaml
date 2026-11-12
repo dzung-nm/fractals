@@ -9,6 +9,7 @@ environment:
 
 dependencies:
   file_saver: ^0.7.0
+  fractals_gen: ^1.0.0
   flutter:
     sdk: flutter
 

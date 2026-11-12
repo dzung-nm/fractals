@@ -4,14 +4,13 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:file_saver/file_saver.dart';
-import 'package:flutter/foundation.dart' show compute, kIsWeb;
+import 'package:fractals_gen/color_palette.dart';
+import 'package:fractals_gen/julia.dart' as julia;
+import 'package:fractals_gen/mandelbrot.dart' as mandelbrot;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import 'core/color_palette.dart';
 import 'image_painter.dart';
-import 'core/julia.dart';
-import 'core/mandelbrot.dart';
 
 enum FractalType {
   mandelbrot('Mandelbrot'),
@@ -47,6 +46,7 @@ class _FractalWidgetState extends State<FractalWidget> {
   bool _isSavingImage = false;
 
   Duration? _lastComputeDuration;
+  Duration? _lastRenderDuration;
   int _completedRenderCount = 0;
 
   int _renderRequestId = 0;
@@ -66,7 +66,6 @@ class _FractalWidgetState extends State<FractalWidget> {
   double get _spanX => _spanY * widget.width / widget.height;
   int get _maxIter =>
       (120 + 40 * (math.log(_zoom) / math.ln2)).round().clamp(80, 800).toInt();
-  int get _workerCount => kIsWeb ? 1 : math.min(8, widget.height);
 
   double _scaleStartSpanY = _baseSpanY;
   double _gestureScale = 1.0;
@@ -227,6 +226,8 @@ class _FractalWidgetState extends State<FractalWidget> {
   }
 
   Future<void> _renderFractal() async {
+    final stopwatch = Stopwatch()..start();
+
     final width = widget.width;
     final height = widget.height;
     final maxIter = _maxIter;
@@ -234,63 +235,46 @@ class _FractalWidgetState extends State<FractalWidget> {
     final centerY = _centerY;
     final spanX = _spanX;
     final spanY = _spanY;
+
     final requestId = ++_renderRequestId;
-
-    final computeStopwatch = Stopwatch()..start();
     final paletteIndex = widget.palette.index;
-    late final Uint8List pixels;
-    final pixelGenerator = widget.fractalType == FractalType.julia
-        ? generateJuliaPixels
-        : generateMandelbrotPixels;
 
-    if (kIsWeb) {
-      pixels = await compute(pixelGenerator, <Object>[
-        width,
-        height,
-        centerX,
-        centerY,
-        spanX,
-        spanY,
-        maxIter,
-        paletteIndex,
-        0,
-        height,
-      ]);
+    final Uint8List pixels;
+    final Duration computeTime;
+
+    if (widget.fractalType == FractalType.julia) {
+      final image = await julia.generateImage(
+        julia.JuliaParams(
+          width: width,
+          height: height,
+          centerX: centerX,
+          centerY: centerY,
+          spanX: spanX,
+          spanY: spanY,
+          maxIter: maxIter,
+          paletteIndex: paletteIndex,
+          juliaCRe: -0.5125,
+          juliaCIm: 0.5213,
+        ),
+      );
+      pixels = image.pixels;
+      computeTime = image.computeTime;
     } else {
-      final workerCount = _workerCount;
-      final rowsPerWorker = (height + workerCount - 1) ~/ workerCount;
-      final workerTasks = <Future<Uint8List>>[];
-
-      for (var startY = 0; startY < height; startY += rowsPerWorker) {
-        final endY = math.min(startY + rowsPerWorker, height);
-        final workerArgs = <Object>[
-          width,
-          height,
-          centerX,
-          centerY,
-          spanX,
-          spanY,
-          maxIter,
-          paletteIndex,
-          startY,
-          endY,
-        ];
-        workerTasks.add(
-          widget.fractalType == FractalType.julia
-              ? runJuliaWorker(workerArgs)
-              : runMandelbrotWorker(workerArgs),
-        );
-      }
-
-      final chunks = await Future.wait(workerTasks);
-      pixels = Uint8List(width * height * 4);
-      var offset = 0;
-      for (final chunk in chunks) {
-        pixels.setRange(offset, offset + chunk.length, chunk);
-        offset += chunk.length;
-      }
+      final image = await mandelbrot.generateImage(
+        mandelbrot.MandelbrotParams(
+          width: width,
+          height: height,
+          centerX: centerX,
+          centerY: centerY,
+          spanX: spanX,
+          spanY: spanY,
+          maxIter: maxIter,
+          paletteIndex: paletteIndex,
+        ),
+      );
+      pixels = image.pixels;
+      computeTime = image.computeTime;
     }
-    computeStopwatch.stop();
 
     if (!mounted || requestId != _renderRequestId) return;
 
@@ -309,10 +293,13 @@ class _FractalWidgetState extends State<FractalWidget> {
       return;
     }
 
+    stopwatch.stop();
+
     final oldImage = _image;
     setState(() {
       _image = frame.image;
-      _lastComputeDuration = computeStopwatch.elapsed;
+      _lastComputeDuration = computeTime;
+      _lastRenderDuration = stopwatch.elapsed;
       _completedRenderCount++;
       _gestureScale = 1.0;
       _gestureStartFocalPoint = Offset.zero;
@@ -361,9 +348,9 @@ class _FractalWidgetState extends State<FractalWidget> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('Compute:  ${_formatDuration(_lastComputeDuration)}'),
+              Text('Render:   ${_formatDuration(_lastRenderDuration)}'),
               Text('Size:     ${widget.width} × ${widget.height} px'),
               Text('maxIter:  $_maxIter'),
-              Text('Workers:  $_workerCount'),
               Text('Renders:  $_completedRenderCount'),
             ],
           ),
