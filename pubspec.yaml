@@ -1,0 +1,22 @@
+name: fractals_workspace
+publish_to: none
+
+environment:
+  sdk: ">=3.13.7 <4.0.0"
+
+dev_dependencies:
+  melos: ^8.6.0
+
+workspace:
+  - apps/*
+  - packages/*
+
+melos:
+  scripts:
+    format: dart format .
+    analyze: dart analyze
+
+    # run tests in all packages
+    test: >
+      melos exec -c 1 --fail-fast --dir-exists=test -- \
+        dart test
