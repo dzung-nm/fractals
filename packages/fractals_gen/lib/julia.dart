@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'dart:math' as math;
 
 import 'color_palette.dart';
+import 'constants.dart';
 
 const bool kIsWeb = identical(0, 0.0);
 
@@ -96,7 +97,7 @@ Uint8List generatePixelsIsolate(GeneratePixelsTask task) {
       var magnitudeSquared = 0.0;
       var iter = 0;
 
-      while (magnitudeSquared <= 4.0 && iter < maxIter) {
+      while (magnitudeSquared <= escapeRadiusSquared && iter < maxIter) {
         final temp = zx * zx - zy * zy + juliaCRe;
         zy = 2.0 * zx * zy + juliaCIm;
         zx = temp;
