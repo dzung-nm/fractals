@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+
+# Run the tests before committing
+melos run test
