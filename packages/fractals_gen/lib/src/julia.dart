@@ -50,7 +50,8 @@ class JuliaFractal {
     int startY,
     int endY,
   ) {
-    final palette = paletteStops[params.paletteIndex];
+    // Create a color palette lookup table from the specified palette index.
+    final palette = PaletteLut.fromStops(paletteStops[params.paletteIndex]);
 
     final width = params.width;
     final height = params.height;
@@ -98,16 +99,8 @@ class JuliaFractal {
         } else {
           final smoothIter =
               iter + 1 - math.log(0.5 * math.log(magnitudeSquared)) / math.ln2;
-          final palettePosition =
-              ((smoothIter / 24.0) % 1.0) * (palette.length - 1);
-          final lowerStop = palettePosition.floor();
-          final blend = palettePosition - lowerStop;
-          final start = palette[lowerStop];
-          final end = palette[lowerStop + 1];
-
-          pixels[offset++] = (start[0] + (end[0] - start[0]) * blend).round();
-          pixels[offset++] = (start[1] + (end[1] - start[1]) * blend).round();
-          pixels[offset++] = (start[2] + (end[2] - start[2]) * blend).round();
+          palette.writeColor(smoothIter / kColorPeriod, pixels, offset);
+          offset += 3;
         }
 
         pixels[offset++] = 255;

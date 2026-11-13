@@ -44,7 +44,9 @@ class MandelbrotFractal {
     int startY,
     int endY,
   ) {
-    final palette = paletteStops[params.paletteIndex];
+    // Create a color palette lookup table from the specified palette index.
+    final palette = PaletteLut.fromStops(paletteStops[params.paletteIndex]);
+
     final width = params.width;
     final height = params.height;
     final centerX = params.centerX;
@@ -109,26 +111,8 @@ class MandelbrotFractal {
           // Compute the smooth iteration count for coloring.
           final smoothIter =
               iter + 1 - math.log(0.5 * math.log(magnitudeSquared)) / math.ln2;
-
-          // Map the smooth iteration count to a position within the color palette.
-          // Normalize the smooth iteration count to a value between 0 and 1,
-          // then scale it to the palette length.
-          final palettePosition =
-              ((smoothIter / 24.0) % 1.0) * (palette.length - 1);
-
-          // Determine the lower and upper color stops for interpolation.
-          final lowerStop = palettePosition.floor();
-
-          // Compute the fractional part of the palette position for blending.
-          final blend = palettePosition - lowerStop;
-
-          // Retrieve the start and end colors for interpolation.
-          final start = palette[lowerStop];
-          final end = palette[lowerStop + 1];
-
-          pixels[offset++] = (start[0] + (end[0] - start[0]) * blend).round();
-          pixels[offset++] = (start[1] + (end[1] - start[1]) * blend).round();
-          pixels[offset++] = (start[2] + (end[2] - start[2]) * blend).round();
+          palette.writeColor(smoothIter / kColorPeriod, pixels, offset);
+          offset += 3;
         }
 
         // Set the alpha channel to fully opaque.
