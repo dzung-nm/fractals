@@ -20,3 +20,8 @@ melos:
     test: >
       melos exec -c 1 --fail-fast --dir-exists=test -- \
         dart test
+
+    # run the main Flutter app in debug mode
+    dev: >
+      melos exec --scope=fractals -- \
+        flutter run --debug -d macos
