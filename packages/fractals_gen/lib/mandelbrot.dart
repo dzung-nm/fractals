@@ -7,8 +7,6 @@ import 'color_palette.dart';
 import 'constants.dart';
 import 'common.dart';
 
-const bool kIsWeb = identical(0, 0.0);
-
 class MandelbrotParams {
   // width and height of the image in pixels
   final int width;
