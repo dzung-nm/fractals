@@ -18,16 +18,16 @@ void main(List<String> arguments) async {
     paletteIndex: ColorPalette.inferno.index,
   );
 
-  final juliaImage = await generateImage(params);
+  final juliaImage = await JuliaFractal.generateImage(params);
   print('Julia image generated in ${juliaImage.computeTime.inMilliseconds} ms');
 
   // save the image to a file
   final image = img.Image.fromBytes(
-    width: params.width, 
-    height: params.height, 
+    width: params.width,
+    height: params.height,
     bytes: juliaImage.pixels.buffer,
     numChannels: 4,
-    format: img.Format.uint8
+    format: img.Format.uint8,
   );
   final png = img.encodePng(image);
   await File('data/julia.png').writeAsBytes(png);

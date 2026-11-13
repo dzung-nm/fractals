@@ -17,10 +17,10 @@ void main() {
         paletteIndex: 0,
       );
 
-      final pixels = generatePixelsIsolate(params, 0, 2);
+      final pixels = JuliaFractal.generatePixelsIsolate(params, 0, 2);
 
       expect(pixels, hasLength(3 * 2 * 4));
-      
+
       for (var i = 3; i < pixels.length; i += 4) {
         expect(pixels[i], 255);
       }
@@ -40,7 +40,7 @@ void main() {
         paletteIndex: 0,
       );
 
-      final pixels = generatePixelsIsolate(params, 0, 1);
+      final pixels = JuliaFractal.generatePixelsIsolate(params, 0, 1);
 
       expect(pixels, orderedEquals([0, 0, 0, 255]));
     });
@@ -59,7 +59,7 @@ void main() {
         paletteIndex: 0,
       );
 
-      final pixels = generatePixelsIsolate(params, 0, 1);
+      final pixels = JuliaFractal.generatePixelsIsolate(params, 0, 1);
 
       expect(pixels, hasLength(4));
       expect(pixels.sublist(0, 3), isNot(orderedEquals([0, 0, 0])));
@@ -80,7 +80,7 @@ void main() {
         paletteIndex: 0,
       );
 
-      final pixels = generatePixelsIsolate(params, 0, 1);
+      final pixels = JuliaFractal.generatePixelsIsolate(params, 0, 1);
 
       expect(pixels, hasLength(4));
       expect(pixels.sublist(0, 3), isNot(orderedEquals([0, 0, 0])));
@@ -101,8 +101,8 @@ void main() {
         paletteIndex: 0,
       );
 
-      final allRows = generatePixelsIsolate(params, 0, 3);
-      final lastRow = generatePixelsIsolate(params, 2, 3);
+      final allRows = JuliaFractal.generatePixelsIsolate(params, 0, 3);
+      final lastRow = JuliaFractal.generatePixelsIsolate(params, 2, 3);
 
       expect(lastRow, hasLength(4));
       expect(lastRow, orderedEquals(allRows.sublist(8, 12)));
@@ -110,7 +110,7 @@ void main() {
   });
 
   test('generateImage', () async {
-    final image = await generateImage(
+    final image = await JuliaFractal.generateImage(
       JuliaParams(
         width: 2,
         height: 2,

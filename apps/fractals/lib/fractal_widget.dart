@@ -4,8 +4,8 @@ import 'dart:ui' as ui;
 
 import 'package:file_saver/file_saver.dart';
 import 'package:fractals_gen/color_palette.dart';
-import 'package:fractals_gen/julia.dart' as julia;
-import 'package:fractals_gen/mandelbrot.dart' as mandelbrot;
+import 'package:fractals_gen/julia.dart';
+import 'package:fractals_gen/mandelbrot.dart';
 import 'package:fractals_gen/common.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -242,8 +242,8 @@ class _FractalWidgetState extends State<FractalWidget> {
     final FractalImage fractalImage;
 
     if (widget.fractalType == FractalType.julia) {
-      fractalImage = await julia.generateImage(
-        julia.JuliaParams(
+      fractalImage = await JuliaFractal.generateImage(
+        JuliaParams(
           width: width,
           height: height,
           centerX: centerX,
@@ -257,8 +257,8 @@ class _FractalWidgetState extends State<FractalWidget> {
         ),
       );
     } else {
-      fractalImage = await mandelbrot.generateImage(
-        mandelbrot.MandelbrotParams(
+      fractalImage = await MandelbrotFractal.generateImage(
+        MandelbrotParams(
           width: width,
           height: height,
           centerX: centerX,
