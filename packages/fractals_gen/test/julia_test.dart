@@ -1,4 +1,4 @@
-import 'package:fractals_gen/julia.dart';
+import 'package:fractals_gen/fractals_gen.dart';
 import 'package:test/test.dart';
 
 void main() {

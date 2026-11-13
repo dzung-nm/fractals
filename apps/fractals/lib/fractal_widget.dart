@@ -3,12 +3,9 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:file_saver/file_saver.dart';
-import 'package:fractals_gen/color_palette.dart';
-import 'package:fractals_gen/julia.dart';
-import 'package:fractals_gen/mandelbrot.dart';
-import 'package:fractals_gen/common.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:fractals_gen/fractals_gen.dart';
 
 import 'image_painter.dart';
 

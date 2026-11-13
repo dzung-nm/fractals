@@ -1,4 +1,4 @@
-import 'package:fractals_gen/mandelbrot.dart';
+import 'package:fractals_gen/src/mandelbrot.dart';
 import 'package:test/test.dart';
 
 void main() {

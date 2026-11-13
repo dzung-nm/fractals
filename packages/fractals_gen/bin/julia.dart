@@ -1,8 +1,7 @@
 import 'dart:io';
-import 'package:image/image.dart' as img;
 
-import 'package:fractals_gen/color_palette.dart';
-import 'package:fractals_gen/julia.dart';
+import 'package:image/image.dart' as img;
+import 'package:fractals_gen/fractals_gen.dart';
 
 void main(List<String> arguments) async {
   final params = JuliaParams(

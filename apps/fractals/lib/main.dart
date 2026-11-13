@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fractals_gen/color_palette.dart';
+import 'package:fractals_gen/fractals_gen.dart';
 
 import 'fractal_widget.dart';
 
