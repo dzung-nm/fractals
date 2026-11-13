@@ -61,8 +61,7 @@ class _FractalWidgetState extends State<FractalWidget> {
 
   double get _spanY => _baseSpanY / _zoom;
   double get _spanX => _spanY * widget.width / widget.height;
-  int get _maxIter =>
-      (120 + 40 * (math.log(_zoom) / math.ln2)).round().clamp(80, 800).toInt();
+  int get _maxIter => 300;
 
   double _scaleStartSpanY = _baseSpanY;
   double _gestureScale = 1.0;
