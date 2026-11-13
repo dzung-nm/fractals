@@ -5,6 +5,7 @@ import 'dart:math' as math;
 
 import 'color_palette.dart';
 import 'constants.dart';
+import 'common.dart';
 
 const bool kIsWeb = identical(0, 0.0);
 
@@ -39,33 +40,15 @@ class MandelbrotParams {
   });
 }
 
-class GeneratePixelsTask {
-  final MandelbrotParams params;
-
-  // start and end y-coordinates for the portion of the image to generate
-  // (used for parallel processing)
-  final int startY;
-  final int endY;
-
-  GeneratePixelsTask({
-    required this.params,
-    required this.startY,
-    required this.endY,
-  });
-}
-
-Uint8List generatePixelsIsolate(GeneratePixelsTask task) {
-  final palette = paletteStops[task.params.paletteIndex];
-  final width = task.params.width;
-  final height = task.params.height;
-  final centerX = task.params.centerX;
-  final centerY = task.params.centerY;
-  final spanX = task.params.spanX;
-  final spanY = task.params.spanY;
-  final maxIter = task.params.maxIter;
-
-  final startY = task.startY;
-  final endY = task.endY;
+Uint8List generatePixelsIsolate(MandelbrotParams params, int startY, int endY) {
+  final palette = paletteStops[params.paletteIndex];
+  final width = params.width;
+  final height = params.height;
+  final centerX = params.centerX;
+  final centerY = params.centerY;
+  final spanX = params.spanX;
+  final spanY = params.spanY;
+  final maxIter = params.maxIter;
 
   // Calculate the minimum x and y coordinates in the complex plane
   final xMin = centerX - spanX / 2;
@@ -151,14 +134,7 @@ Uint8List generatePixelsIsolate(GeneratePixelsTask task) {
   return pixels;
 }
 
-class MandelbrotImage {
-  final Uint8List pixels;
-  final Duration computeTime;
-
-  MandelbrotImage({required this.pixels, required this.computeTime});
-}
-
-Future<MandelbrotImage> generateImage(MandelbrotParams params) async {
+Future<FractalImage> generateImage(MandelbrotParams params) async {
   final stopwatch = Stopwatch()..start();
 
   // Calculate the number of isolates to spawn based on
@@ -180,13 +156,7 @@ Future<MandelbrotImage> generateImage(MandelbrotParams params) async {
       continue;
     }
 
-    final task = GeneratePixelsTask(
-      params: params,
-      startY: startY,
-      endY: endY,
-    );
-
-    pixelsFutures.add(Isolate.run(() => generatePixelsIsolate(task)));
+    pixelsFutures.add(Isolate.run(() => generatePixelsIsolate(params, startY, endY)));
   }
 
   // Wait for all isolates to complete and collect their pixel data.
@@ -202,7 +172,7 @@ Future<MandelbrotImage> generateImage(MandelbrotParams params) async {
 
   stopwatch.stop();
   
-  return MandelbrotImage(
+  return FractalImage(
     pixels: combinedPixels,
     computeTime: stopwatch.elapsed,
   );

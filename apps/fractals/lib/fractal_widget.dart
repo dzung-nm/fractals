@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:math' as math;
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:file_saver/file_saver.dart';
 import 'package:fractals_gen/color_palette.dart';
 import 'package:fractals_gen/julia.dart' as julia;
 import 'package:fractals_gen/mandelbrot.dart' as mandelbrot;
+import 'package:fractals_gen/common.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -239,11 +239,10 @@ class _FractalWidgetState extends State<FractalWidget> {
     final requestId = ++_renderRequestId;
     final paletteIndex = widget.palette.index;
 
-    final Uint8List pixels;
-    final Duration computeTime;
+    final FractalImage fractalImage;
 
     if (widget.fractalType == FractalType.julia) {
-      final image = await julia.generateImage(
+      fractalImage = await julia.generateImage(
         julia.JuliaParams(
           width: width,
           height: height,
@@ -257,10 +256,8 @@ class _FractalWidgetState extends State<FractalWidget> {
           juliaCIm: 0.5213,
         ),
       );
-      pixels = image.pixels;
-      computeTime = image.computeTime;
     } else {
-      final image = await mandelbrot.generateImage(
+      fractalImage = await mandelbrot.generateImage(
         mandelbrot.MandelbrotParams(
           width: width,
           height: height,
@@ -272,13 +269,11 @@ class _FractalWidgetState extends State<FractalWidget> {
           paletteIndex: paletteIndex,
         ),
       );
-      pixels = image.pixels;
-      computeTime = image.computeTime;
     }
 
     if (!mounted || requestId != _renderRequestId) return;
 
-    final buffer = await ui.ImmutableBuffer.fromUint8List(pixels);
+    final buffer = await ui.ImmutableBuffer.fromUint8List(fractalImage.pixels);
     final descriptor = ui.ImageDescriptor.raw(
       buffer,
       width: width,
@@ -298,7 +293,7 @@ class _FractalWidgetState extends State<FractalWidget> {
     final oldImage = _image;
     setState(() {
       _image = frame.image;
-      _lastComputeDuration = computeTime;
+      _lastComputeDuration = fractalImage.computeTime;
       _lastRenderDuration = stopwatch.elapsed;
       _completedRenderCount++;
       _gestureScale = 1.0;

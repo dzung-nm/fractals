@@ -15,9 +15,7 @@ void main() {
         paletteIndex: 0,
       );
 
-      final pixels = generatePixelsIsolate(
-        GeneratePixelsTask(params: params, startY: 0, endY: 2),
-      );
+      final pixels = generatePixelsIsolate(params, 0, 2);
 
       expect(pixels, hasLength(3 * 2 * 4));
 
@@ -38,9 +36,7 @@ void main() {
         paletteIndex: 0,
       );
 
-      final pixels = generatePixelsIsolate(
-        GeneratePixelsTask(params: params, startY: 0, endY: 1),
-      );
+      final pixels = generatePixelsIsolate(params, 0, 1);
 
       expect(pixels, orderedEquals([0, 0, 0, 255]));
     });
@@ -57,9 +53,7 @@ void main() {
         paletteIndex: 0,
       );
 
-      final pixels = generatePixelsIsolate(
-        GeneratePixelsTask(params: params, startY: 0, endY: 1),
-      );
+      final pixels = generatePixelsIsolate(params, 0, 1);
 
       expect(pixels, orderedEquals([0, 0, 0, 255]));
     });
@@ -76,9 +70,7 @@ void main() {
         paletteIndex: 0,
       );
 
-      final pixels = generatePixelsIsolate(
-        GeneratePixelsTask(params: params, startY: 0, endY: 1),
-      );
+      final pixels = generatePixelsIsolate(params, 0, 1);
 
       expect(pixels, hasLength(4));
       expect(pixels.sublist(0, 3), isNot(orderedEquals([0, 0, 0])));
@@ -97,12 +89,8 @@ void main() {
         paletteIndex: 0,
       );
 
-      final allRows = generatePixelsIsolate(
-        GeneratePixelsTask(params: params, startY: 0, endY: 3),
-      );
-      final lastRow = generatePixelsIsolate(
-        GeneratePixelsTask(params: params, startY: 2, endY: 3),
-      );
+      final allRows = generatePixelsIsolate(params, 0, 3);
+      final lastRow = generatePixelsIsolate(params, 2, 3);
 
       expect(lastRow, hasLength(4));
       expect(lastRow, orderedEquals(allRows.sublist(8, 12)));
@@ -130,7 +118,7 @@ void main() {
     }
 
     expect(image.computeTime, isA<Duration>());
-    
+
     expect(image.computeTime.inMicroseconds, greaterThanOrEqualTo(0));
   });
 }
