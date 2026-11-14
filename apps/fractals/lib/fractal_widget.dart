@@ -396,7 +396,7 @@ class _FractalWidgetState extends State<FractalWidget> {
                 ),
               ),
               Positioned(
-                top: 20,
+                bottom: 20,
                 right: 20,
                 child: IgnorePointer(child: _buildPerformanceHud()),
               ),
