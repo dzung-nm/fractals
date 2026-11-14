@@ -30,6 +30,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   ColorPalette _palette = ColorPalette.inferno;
   FractalType _fractalType = FractalType.mandelbrot;
+  int _maxIterations = 300;
 
   GlobalKey<FractalWidgetState> _fractalKey = GlobalKey<FractalWidgetState>();
 
@@ -43,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: HamburgerMenu(
         selectedFractal: _fractalType,
         selectedPalette: _palette,
+        maxIterations: _maxIterations,
         onFractalChanged: (type) {
           if (type == _fractalType) return;
           setState(() {
@@ -53,6 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
         onPaletteChanged: (palette) {
           if (palette == _palette) return;
           setState(() => _palette = palette);
+        },
+        onMaxIterationsChanged: (iterations) {
+          setState(() => _maxIterations = iterations);
         },
         onReset: () {
           setState(() {
@@ -81,6 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: height,
                   palette: _palette,
                   fractalType: _fractalType,
+                  maxIterations: _maxIterations,
                 ),
               ),
               Positioned(

@@ -6,8 +6,10 @@ import 'fractal_widget.dart';
 class HamburgerMenu extends StatelessWidget {
   final FractalType selectedFractal;
   final ColorPalette selectedPalette;
+  final int maxIterations;
   final ValueChanged<FractalType> onFractalChanged;
   final ValueChanged<ColorPalette> onPaletteChanged;
+  final ValueChanged<int> onMaxIterationsChanged;
   final VoidCallback onReset;
   final VoidCallback onSaveImage;
 
@@ -15,8 +17,10 @@ class HamburgerMenu extends StatelessWidget {
     super.key,
     required this.selectedFractal,
     required this.selectedPalette,
+    required this.maxIterations,
     required this.onFractalChanged,
     required this.onPaletteChanged,
+    required this.onMaxIterationsChanged,
     required this.onReset,
     required this.onSaveImage,
   });
@@ -76,10 +80,27 @@ class HamburgerMenu extends StatelessWidget {
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Iterations: $maxIterations'),
+                  Slider(
+                    min: 100,
+                    max: 500,
+                    divisions: 400,
+                    value: maxIterations.toDouble(),
+                    label: '$maxIterations',
+                    onChanged: (value) => onMaxIterationsChanged(value.round()),
+                  ),
+                ],
+              ),
+            ),
             ListTile(
               leading: const Icon(Icons.refresh),
               title: const Text('Reset'),
-              onTap: onReset,  
+              onTap: onReset,
             ),
             ListTile(
               leading: const Icon(Icons.save_alt),

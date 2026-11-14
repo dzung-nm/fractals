@@ -23,6 +23,7 @@ class FractalWidget extends StatefulWidget {
   final int height;
   final ColorPalette palette;
   final FractalType fractalType;
+  final int maxIterations;
 
   const FractalWidget({
     super.key,
@@ -30,6 +31,7 @@ class FractalWidget extends StatefulWidget {
     required this.height,
     required this.palette,
     required this.fractalType,
+    this.maxIterations = 300,
   });
 
   @override
@@ -61,7 +63,7 @@ class _FractalWidgetState extends State<FractalWidget> {
 
   double get _spanY => _baseSpanY / _zoom;
   double get _spanX => _spanY * widget.width / widget.height;
-  int get _maxIter => 300;
+  int get _maxIter => widget.maxIterations;
 
   double _scaleStartSpanY = _baseSpanY;
   double _gestureScale = 1.0;
@@ -88,7 +90,8 @@ class _FractalWidgetState extends State<FractalWidget> {
     if (oldWidget.width != widget.width ||
         oldWidget.height != widget.height ||
         oldWidget.palette != widget.palette ||
-        oldWidget.fractalType != widget.fractalType) {
+        oldWidget.fractalType != widget.fractalType ||
+        oldWidget.maxIterations != widget.maxIterations) {
       _cancelPendingWheelRender();
       _renderFractal();
     }
