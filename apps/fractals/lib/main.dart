@@ -33,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _maxIterations = 300;
   double _juliaCRe = -0.5125;
   double _juliaCIm = 0.5213;
+  bool _showPerformanceHud = true;
 
   GlobalKey<FractalWidgetState> _fractalKey = GlobalKey<FractalWidgetState>();
 
@@ -63,6 +64,10 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         juliaCRe: _juliaCRe,
         juliaCIm: _juliaCIm,
+        showPerformanceHud: _showPerformanceHud,
+        onPerformanceHudChanged: (show) {
+          setState(() => _showPerformanceHud = show);
+        },
         onJuliaChanged: (real, imaginary) {
           setState(() {
             _juliaCRe = real;
@@ -99,6 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   maxIterations: _maxIterations,
                   juliaCRe: _juliaCRe,
                   juliaCIm: _juliaCIm,
+                  showPerformanceHud: _showPerformanceHud,
                 ),
               ),
               Positioned(

@@ -26,6 +26,7 @@ class FractalWidget extends StatefulWidget {
   final int maxIterations;
   final double juliaCRe;
   final double juliaCIm;
+  final bool showPerformanceHud;
 
   const FractalWidget({
     super.key,
@@ -36,6 +37,7 @@ class FractalWidget extends StatefulWidget {
     this.maxIterations = 300,
     this.juliaCRe = -0.5125,
     this.juliaCIm = 0.5213,
+    this.showPerformanceHud = true,
   });
 
   @override
@@ -404,11 +406,12 @@ class _FractalWidgetState extends State<FractalWidget> {
                         ),
                 ),
               ),
-              Positioned(
-                bottom: 20,
-                right: 20,
-                child: IgnorePointer(child: _buildPerformanceHud()),
-              ),
+              if (widget.showPerformanceHud)
+                Positioned(
+                  bottom: 20,
+                  right: 20,
+                  child: IgnorePointer(child: _buildPerformanceHud()),
+                ),
             ],
           ),
         ),

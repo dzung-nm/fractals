@@ -9,10 +9,12 @@ class HamburgerMenu extends StatefulWidget {
   final int maxIterations;
   final double juliaCRe;
   final double juliaCIm;
+  final bool showPerformanceHud;
   final ValueChanged<FractalType> onFractalChanged;
   final ValueChanged<ColorPalette> onPaletteChanged;
   final ValueChanged<int> onMaxIterationsChanged;
   final void Function(double real, double imaginary) onJuliaChanged;
+  final ValueChanged<bool> onPerformanceHudChanged;
   final VoidCallback onReset;
   final VoidCallback onSaveImage;
 
@@ -23,10 +25,12 @@ class HamburgerMenu extends StatefulWidget {
     required this.maxIterations,
     required this.juliaCRe,
     required this.juliaCIm,
+    required this.showPerformanceHud,
     required this.onFractalChanged,
     required this.onPaletteChanged,
     required this.onMaxIterationsChanged,
     required this.onJuliaChanged,
+    required this.onPerformanceHudChanged,
     required this.onReset,
     required this.onSaveImage,
   });
@@ -125,7 +129,9 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
                     decimal: true,
                     signed: true,
                   ),
-                  decoration: const InputDecoration(labelText: 'Julia real (juliaCre)'),
+                  decoration: const InputDecoration(
+                    labelText: 'Julia real (juliaCre)',
+                  ),
                 ),
               ),
               Padding(
@@ -198,6 +204,13 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
               leading: const Icon(Icons.save_alt),
               title: const Text('Save image as PNG'),
               onTap: widget.onSaveImage,
+            ),
+            CheckboxListTile(
+              title: const Text('Show performance HUD'),
+              value: widget.showPerformanceHud,
+              onChanged: (show) {
+                if (show != null) widget.onPerformanceHudChanged(show);
+              },
             ),
           ],
         ),
