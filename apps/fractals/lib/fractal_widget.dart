@@ -24,6 +24,8 @@ class FractalWidget extends StatefulWidget {
   final ColorPalette palette;
   final FractalType fractalType;
   final int maxIterations;
+  final double juliaCRe;
+  final double juliaCIm;
 
   const FractalWidget({
     super.key,
@@ -32,6 +34,8 @@ class FractalWidget extends StatefulWidget {
     required this.palette,
     required this.fractalType,
     this.maxIterations = 300,
+    this.juliaCRe = -0.5125,
+    this.juliaCIm = 0.5213,
   });
 
   @override
@@ -91,7 +95,9 @@ class _FractalWidgetState extends State<FractalWidget> {
         oldWidget.height != widget.height ||
         oldWidget.palette != widget.palette ||
         oldWidget.fractalType != widget.fractalType ||
-        oldWidget.maxIterations != widget.maxIterations) {
+        oldWidget.maxIterations != widget.maxIterations ||
+        oldWidget.juliaCRe != widget.juliaCRe ||
+        oldWidget.juliaCIm != widget.juliaCIm) {
       _cancelPendingWheelRender();
       _renderFractal();
     }
@@ -254,8 +260,8 @@ class _FractalWidgetState extends State<FractalWidget> {
           spanY: spanY,
           maxIter: maxIter,
           paletteIndex: paletteIndex,
-          juliaCRe: -0.5125,
-          juliaCIm: 0.5213,
+          juliaCRe: widget.juliaCRe,
+          juliaCIm: widget.juliaCIm,
         ),
       );
     } else {

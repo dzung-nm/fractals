@@ -31,6 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
   ColorPalette _palette = ColorPalette.inferno;
   FractalType _fractalType = FractalType.mandelbrot;
   int _maxIterations = 300;
+  double _juliaCRe = -0.5125;
+  double _juliaCIm = 0.5213;
 
   GlobalKey<FractalWidgetState> _fractalKey = GlobalKey<FractalWidgetState>();
 
@@ -58,6 +60,14 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         onMaxIterationsChanged: (iterations) {
           setState(() => _maxIterations = iterations);
+        },
+        juliaCRe: _juliaCRe,
+        juliaCIm: _juliaCIm,
+        onJuliaChanged: (real, imaginary) {
+          setState(() {
+            _juliaCRe = real;
+            _juliaCIm = imaginary;
+          });
         },
         onReset: () {
           setState(() {
@@ -87,6 +97,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   palette: _palette,
                   fractalType: _fractalType,
                   maxIterations: _maxIterations,
+                  juliaCRe: _juliaCRe,
+                  juliaCIm: _juliaCIm,
                 ),
               ),
               Positioned(
