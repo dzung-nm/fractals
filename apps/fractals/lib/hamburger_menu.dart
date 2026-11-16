@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fractals_gen/fractals_gen.dart';
 
 import 'fractal_widget.dart';
@@ -211,6 +212,11 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
               onChanged: (show) {
                 if (show != null) widget.onPerformanceHudChanged(show);
               },
+            ),
+            ListTile(
+              leading: const Icon(Icons.exit_to_app),
+              title: const Text('Exit'),
+              onTap: SystemNavigator.pop,
             ),
           ],
         ),
