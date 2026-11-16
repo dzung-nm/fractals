@@ -235,8 +235,11 @@ class _FractalWidgetState extends State<FractalWidget> {
   Future<void> _renderFractal() async {
     final stopwatch = Stopwatch()..start();
 
-    final width = widget.width;
-    final height = widget.height;
+    // Use a scaling factor of 2 for the rendering to improve image quality.
+    final scale = 2;
+    final width = widget.width * scale;
+    final height = widget.height * scale;
+    
     final maxIter = _maxIter;
     final centerX = _centerX;
     final centerY = _centerY;
@@ -248,14 +251,11 @@ class _FractalWidgetState extends State<FractalWidget> {
 
     final FractalImage fractalImage;
 
-    // Use a scaling factor of 2 for the rendering to improve image quality.
-    final scale = 2;
-
     if (widget.fractalType == FractalType.julia) {
       fractalImage = await JuliaFractal.generateImage(
         JuliaParams(
-          width: width * scale,
-          height: height * scale,
+          width: width,
+          height: height,
           centerX: centerX,
           centerY: centerY,
           spanX: spanX,
@@ -269,8 +269,8 @@ class _FractalWidgetState extends State<FractalWidget> {
     } else {
       fractalImage = await MandelbrotFractal.generateImage(
         MandelbrotParams(
-          width: width * scale,
-          height: height * scale,
+          width: width,
+          height: height,
           centerX: centerX,
           centerY: centerY,
           spanX: spanX,
@@ -286,8 +286,8 @@ class _FractalWidgetState extends State<FractalWidget> {
     final buffer = await ui.ImmutableBuffer.fromUint8List(fractalImage.pixels);
     final descriptor = ui.ImageDescriptor.raw(
       buffer,
-      width: width * scale,
-      height: height * scale,
+      width: width,
+      height: height,
       pixelFormat: ui.PixelFormat.rgba8888,
     );
     final codec = await descriptor.instantiateCodec();
