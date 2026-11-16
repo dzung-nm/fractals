@@ -24,4 +24,4 @@ melos:
     # run the main Flutter app in debug mode
     dev: >
       melos exec --scope=fractals -- \
-        flutter run --debug -d macos
+        flutter run -d macos --no-pub
