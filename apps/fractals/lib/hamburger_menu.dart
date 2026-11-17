@@ -40,7 +40,11 @@ class HamburgerMenu extends StatefulWidget {
   State<HamburgerMenu> createState() => _HamburgerMenuState();
 }
 
-class _HamburgerMenuState extends State<HamburgerMenu> {
+class _HamburgerMenuState extends State<HamburgerMenu>
+    with TickerProviderStateMixin {
+  static const _iterationSteps = <int>[100, 200, 300, 400, 500, 600, 700];
+  static const _juliaStep = 0.005;
+
   late final TextEditingController _juliaCReController;
   late final TextEditingController _juliaCImController;
 
@@ -48,10 +52,10 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
   void initState() {
     super.initState();
     _juliaCReController = TextEditingController(
-      text: widget.juliaCRe.toString(),
+      text: _formatJulia(widget.juliaCRe),
     );
     _juliaCImController = TextEditingController(
-      text: widget.juliaCIm.toString(),
+      text: _formatJulia(widget.juliaCIm),
     );
   }
 
@@ -59,10 +63,10 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
   void didUpdateWidget(covariant HamburgerMenu oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.juliaCRe != widget.juliaCRe) {
-      _juliaCReController.text = widget.juliaCRe.toString();
+      _juliaCReController.text = _formatJulia(widget.juliaCRe);
     }
     if (oldWidget.juliaCIm != widget.juliaCIm) {
-      _juliaCImController.text = widget.juliaCIm.toString();
+      _juliaCImController.text = _formatJulia(widget.juliaCIm);
     }
   }
 
@@ -71,6 +75,26 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
     _juliaCReController.dispose();
     _juliaCImController.dispose();
     super.dispose();
+  }
+
+  String _formatJulia(double value) => value.toStringAsFixed(4);
+
+  int get _iterationIndex =>
+      List<int>.generate(_iterationSteps.length, (index) => index).reduce(
+        (best, index) =>
+            (widget.maxIterations - _iterationSteps[index]).abs() <
+                (widget.maxIterations - _iterationSteps[best]).abs()
+            ? index
+            : best,
+      );
+
+  void _adjustJulia(TextEditingController controller, double delta) {
+    final next = (double.tryParse(controller.text.trim()) ?? 0) + delta;
+    final text = _formatJulia(next);
+    controller.value = TextEditingValue(
+      text: text,
+      selection: TextSelection.collapsed(offset: text.length),
+    );
   }
 
   void _updateJulia() {
@@ -85,142 +109,399 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
     widget.onJuliaChanged(real, imaginary);
   }
 
+  List<Color> _paletteColors(ColorPalette palette) {
+    switch (palette.name.toLowerCase()) {
+      case 'inferno':
+        return const [
+          Color(0xFF08051E),
+          Color(0xFF4B1478),
+          Color(0xFFBE234B),
+          Color(0xFFFA6919),
+          Color(0xFFFFE15A),
+        ];
+      case 'ocean':
+        return const [
+          Color(0xFF030826),
+          Color(0xFF143791),
+          Color(0xFF199BD2),
+          Color(0xFF5AEBDA),
+          Color(0xFFE1FFF0),
+        ];
+      case 'aurora':
+        return const [
+          Color(0xFF160A37),
+          Color(0xFF007378),
+          Color(0xFF50DC9B),
+          Color(0xFF6E5AD2),
+          Color(0xFFF573BE),
+        ];
+      default:
+        return const [Color(0xFF362D66), Color(0xFF9C88FF)];
+    }
+  }
+
+  LinearGradient _paletteGradient(ColorPalette palette) => LinearGradient(
+    colors: _paletteColors(palette),
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: SafeArea(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: Align(
-                alignment: Alignment.bottomLeft,
-                child: Text(
-                  'Fractals',
-                  style: TextStyle(color: Colors.white, fontSize: 24),
-                ),
-              ),
-            ),
-            ListTile(
-              title: const Text('Fractal type'),
-              trailing: DropdownButtonHideUnderline(
-                child: DropdownButton<FractalType>(
-                  value: widget.selectedFractal,
-                  items: FractalType.values
-                      .map(
-                        (type) => DropdownMenuItem(
-                          value: type,
-                          child: Text(type.label),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (type) {
-                    if (type != null) widget.onFractalChanged(type);
-                  },
-                ),
-              ),
-            ),
-            if (widget.selectedFractal == FractalType.julia) ...[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                child: TextField(
-                  controller: _juliaCReController,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                    signed: true,
-                  ),
-                  decoration: const InputDecoration(
-                    labelText: 'Julia real (juliaCre)',
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                child: TextField(
-                  controller: _juliaCImController,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                    signed: true,
-                  ),
-                  decoration: const InputDecoration(
-                    labelText: 'Julia imaginary (juliaCIm)',
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    onPressed: _updateJulia,
-                    child: const Text('update'),
-                  ),
-                ),
-              ),
+    final scheme = ColorScheme.fromSeed(
+      seedColor: const Color(0xFF9C88FF),
+      brightness: Brightness.dark,
+    );
+    return Theme(
+      data: ThemeData(
+        useMaterial3: true,
+        colorScheme: scheme,
+        scaffoldBackgroundColor: const Color(0xFF16161E),
+        drawerTheme: const DrawerThemeData(backgroundColor: Color(0xFF16161E)),
+        inputDecorationTheme: InputDecorationTheme(
+          isDense: true,
+          filled: true,
+          fillColor: scheme.surfaceContainerHighest.withValues(alpha: .42),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      ),
+      child: Drawer(
+        child: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            children: [
+              _header(scheme),
+              const SizedBox(height: 24),
+              _label('FRACTAL TYPE', scheme),
+              const SizedBox(height: 8),
+              _fractalTypes(scheme),
+              _juliaEditor(scheme),
+              const SizedBox(height: 24),
+              _label('COLOR PALETTE', scheme),
+              const SizedBox(height: 8),
+              _palettes(),
+              const SizedBox(height: 24),
+              _iterations(scheme),
+              const SizedBox(height: 24),
+              _label('DISPLAY', scheme),
+              _performanceHud(),
+              const SizedBox(height: 20),
+              _label('ACTIONS', scheme),
+              const SizedBox(height: 8),
+              _actions(),
+              const SizedBox(height: 24),
+              _exitButton(scheme),
+              const SizedBox(height: 12),
             ],
-            ListTile(
-              title: const Text('Color palette'),
-              trailing: DropdownButtonHideUnderline(
-                child: DropdownButton<ColorPalette>(
-                  value: widget.selectedPalette,
-                  items: ColorPalette.values
-                      .map(
-                        (palette) => DropdownMenuItem(
-                          value: palette,
-                          child: Text(palette.label),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (palette) {
-                    if (palette != null) widget.onPaletteChanged(palette);
-                  },
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Iterations: ${widget.maxIterations}'),
-                  Slider(
-                    min: 100,
-                    max: 500,
-                    divisions: 400,
-                    value: widget.maxIterations.toDouble(),
-                    label: '${widget.maxIterations}',
-                    onChanged: (value) =>
-                        widget.onMaxIterationsChanged(value.round()),
-                  ),
-                ],
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.refresh),
-              title: const Text('Reset'),
-              onTap: widget.onReset,
-            ),
-            ListTile(
-              leading: const Icon(Icons.save_alt),
-              title: const Text('Save image as PNG'),
-              onTap: widget.onSaveImage,
-            ),
-            CheckboxListTile(
-              title: const Text('Show performance HUD'),
-              value: widget.showPerformanceHud,
-              onChanged: (show) {
-                if (show != null) widget.onPerformanceHudChanged(show);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.exit_to_app),
-              title: const Text('Exit'),
-              onTap: SystemNavigator.pop,
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
+
+  Widget _header(ColorScheme scheme) => Container(
+    constraints: const BoxConstraints(minHeight: 96),
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(16),
+      gradient: _paletteGradient(widget.selectedPalette),
+      boxShadow: [
+        BoxShadow(color: scheme.primary.withValues(alpha: .24), blurRadius: 18),
+      ],
+    ),
+    child: const Row(
+      children: [
+        Icon(Icons.blur_on_rounded, color: Colors.white),
+        SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'FRACTAL STUDIO',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: .8,
+                ),
+              ),
+              SizedBox(height: 3),
+              Text(
+                'Real-time Exploration',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  shadows: [Shadow(blurRadius: 4)],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+
+  Widget _label(String text, ColorScheme scheme) => Text(
+    text,
+    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+      letterSpacing: 1.2,
+      fontWeight: FontWeight.w700,
+      color: scheme.onSurfaceVariant,
+    ),
+  );
+
+  Widget _fractalTypes(ColorScheme scheme) => SingleChildScrollView(
+    scrollDirection: Axis.horizontal,
+    child: Row(
+      children: FractalType.values
+          .map(
+            (type) => Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: ChoiceChip(
+                label: Text(type.label),
+                selected: type == widget.selectedFractal,
+                onSelected: (_) => widget.onFractalChanged(type),
+                side: BorderSide(
+                  color: type == widget.selectedFractal
+                      ? scheme.primary
+                      : scheme.outlineVariant,
+                ),
+              ),
+            ),
+          )
+          .toList(),
+    ),
+  );
+
+  Widget _juliaEditor(ColorScheme scheme) => AnimatedSize(
+    duration: const Duration(milliseconds: 220),
+    curve: Curves.easeInOut,
+    child: widget.selectedFractal != FractalType.julia
+        ? const SizedBox.shrink()
+        : Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: Card(
+              margin: EdgeInsets.zero,
+              color: scheme.surfaceContainerLow,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _label('JULIA CONSTANT (C)', scheme),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _juliaField('Real', _juliaCReController),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _juliaField('Imaginary', _juliaCImController),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: _updateJulia,
+                        child: const Text('UPDATE'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+  );
+
+  Widget _juliaField(String label, TextEditingController controller) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(label, style: Theme.of(context).textTheme.labelMedium),
+      const SizedBox(height: 5),
+      Row(
+        children: [
+          IconButton.filledTonal(
+            visualDensity: VisualDensity.compact,
+            tooltip: 'Decrease $label',
+            onPressed: () => _adjustJulia(controller, -_juliaStep),
+            icon: const Icon(Icons.remove, size: 16),
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: TextField(
+              controller: controller,
+              textAlign: TextAlign.center,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+                signed: true,
+              ),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[-0-9.]')),
+              ],
+            ),
+          ),
+          const SizedBox(width: 4),
+          IconButton.filledTonal(
+            visualDensity: VisualDensity.compact,
+            tooltip: 'Increase $label',
+            onPressed: () => _adjustJulia(controller, _juliaStep),
+            icon: const Icon(Icons.add, size: 16),
+          ),
+        ],
+      ),
+    ],
+  );
+
+  Widget _palettes() => Column(
+    children: ColorPalette.values.map((palette) {
+      final selected = palette == widget.selectedPalette;
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Semantics(
+          selected: selected,
+          button: true,
+          label: '${palette.label} color palette',
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () => widget.onPaletteChanged(palette),
+            child: Ink(
+              height: 40,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                gradient: _paletteGradient(palette),
+                border: Border.all(
+                  color: selected
+                      ? Colors.white
+                      : Colors.white.withValues(alpha: .16),
+                  width: selected ? 2 : 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      palette.label,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black87,
+                            blurRadius: 5,
+                            offset: Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (selected) const Icon(Icons.check, color: Colors.white),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }).toList(),
+  );
+
+  Widget _iterations(ColorScheme scheme) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        children: [
+          _label('ITERATIONS:', scheme),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+            decoration: ShapeDecoration(
+              color: scheme.primaryContainer,
+              shape: const StadiumBorder(),
+            ),
+            child: Text(
+              '${widget.maxIterations}',
+              style: TextStyle(
+                color: scheme.onPrimaryContainer,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+        ],
+      ),
+      Slider(
+        min: 0,
+        max: (_iterationSteps.length - 1).toDouble(),
+        divisions: _iterationSteps.length - 1,
+        value: _iterationIndex.toDouble(),
+        label: '${widget.maxIterations}',
+        onChanged: (value) =>
+            widget.onMaxIterationsChanged(_iterationSteps[value.round()]),
+      ),
+      Row(
+        children: List.generate(
+          _iterationSteps.length,
+          (index) => Expanded(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(6),
+              onTap: () =>
+                  widget.onMaxIterationsChanged(_iterationSteps[index]),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Text(
+                  '${_iterationSteps[index]}',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
+
+  Widget _performanceHud() => SwitchListTile(
+    contentPadding: EdgeInsets.zero,
+    title: const Text('Performance HUD'),
+    subtitle: const Text('Show render timing and frame rate'),
+    value: widget.showPerformanceHud,
+    onChanged: widget.onPerformanceHudChanged,
+  );
+
+  Widget _actions() => Row(
+    children: [
+      Expanded(
+        child: OutlinedButton.icon(
+          onPressed: widget.onReset,
+          icon: const Icon(Icons.refresh),
+          label: const Text('Reset'),
+        ),
+      ),
+      const SizedBox(width: 10),
+      Expanded(
+        child: FilledButton.tonalIcon(
+          onPressed: widget.onSaveImage,
+          icon: const Icon(Icons.download),
+          label: const Text('Save PNG'),
+        ),
+      ),
+    ],
+  );
+
+  Widget _exitButton(ColorScheme scheme) => SizedBox(
+    width: double.infinity,
+    child: OutlinedButton.icon(
+      onPressed: SystemNavigator.pop,
+      icon: const Icon(Icons.exit_to_app),
+      label: const Text('Exit Application'),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: scheme.error,
+        side: BorderSide(color: scheme.error.withValues(alpha: .65)),
+      ),
+    ),
+  );
 }
