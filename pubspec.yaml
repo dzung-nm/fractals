@@ -19,7 +19,7 @@ melos:
     # run tests in all packages
     test: >
       melos exec -c 1 --fail-fast --dir-exists=test -- \
-        dart test
+        flutter test --no-pub
 
     # run the main Flutter app in debug mode
     dev: >
