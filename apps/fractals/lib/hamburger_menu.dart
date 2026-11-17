@@ -170,77 +170,33 @@ class _HamburgerMenuState extends State<HamburgerMenu>
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             children: [
-              _header(scheme),
               const SizedBox(height: 24),
               _label('FRACTAL TYPE', scheme),
               const SizedBox(height: 8),
               _fractalTypes(scheme),
               _juliaEditor(scheme),
               const SizedBox(height: 24),
+              _iterations(scheme),
               _label('COLOR PALETTE', scheme),
               const SizedBox(height: 8),
               _palettes(),
               const SizedBox(height: 24),
-              _iterations(scheme),
-              const SizedBox(height: 24),
               _label('DISPLAY', scheme),
               _performanceHud(),
               const SizedBox(height: 20),
+
               _label('ACTIONS', scheme),
               const SizedBox(height: 8),
               _actions(),
-              const SizedBox(height: 24),
+
               _exitButton(scheme),
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
             ],
           ),
         ),
       ),
     );
   }
-
-  Widget _header(ColorScheme scheme) => Container(
-    constraints: const BoxConstraints(minHeight: 96),
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(16),
-      gradient: _paletteGradient(widget.selectedPalette),
-      boxShadow: [
-        BoxShadow(color: scheme.primary.withValues(alpha: .24), blurRadius: 18),
-      ],
-    ),
-    child: const Row(
-      children: [
-        Icon(Icons.blur_on_rounded, color: Colors.white),
-        SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'FRACTAL STUDIO',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: .8,
-                ),
-              ),
-              SizedBox(height: 3),
-              Text(
-                'Real-time Exploration',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  shadows: [Shadow(blurRadius: 4)],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
 
   Widget _label(String text, ColorScheme scheme) => Text(
     text,
@@ -356,59 +312,6 @@ class _HamburgerMenuState extends State<HamburgerMenu>
     ],
   );
 
-  Widget _palettes() => Column(
-    children: ColorPalette.values.map((palette) {
-      final selected = palette == widget.selectedPalette;
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Semantics(
-          selected: selected,
-          button: true,
-          label: '${palette.label} color palette',
-          child: InkWell(
-            borderRadius: BorderRadius.circular(12),
-            onTap: () => widget.onPaletteChanged(palette),
-            child: Ink(
-              height: 40,
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                gradient: _paletteGradient(palette),
-                border: Border.all(
-                  color: selected
-                      ? Colors.white
-                      : Colors.white.withValues(alpha: .16),
-                  width: selected ? 2 : 1,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      palette.label,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black87,
-                            blurRadius: 5,
-                            offset: Offset(0, 1),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  if (selected) const Icon(Icons.check, color: Colors.white),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-    }).toList(),
-  );
-
   Widget _iterations(ColorScheme scheme) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -464,10 +367,62 @@ class _HamburgerMenuState extends State<HamburgerMenu>
     ],
   );
 
+  Widget _palettes() => Column(
+    children: ColorPalette.values.map((palette) {
+      final selected = palette == widget.selectedPalette;
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Semantics(
+          selected: selected,
+          button: true,
+          label: '${palette.label} color palette',
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () => widget.onPaletteChanged(palette),
+            child: Ink(
+              height: 40,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                gradient: _paletteGradient(palette),
+                border: Border.all(
+                  color: selected
+                      ? Colors.white
+                      : Colors.white.withValues(alpha: .16),
+                  width: selected ? 2 : 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      palette.label,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black87,
+                            blurRadius: 5,
+                            offset: Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (selected) const Icon(Icons.check, color: Colors.white),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }).toList(),
+  );
+
   Widget _performanceHud() => SwitchListTile(
     contentPadding: EdgeInsets.zero,
     title: const Text('Performance HUD'),
-    subtitle: const Text('Show render timing and frame rate'),
     value: widget.showPerformanceHud,
     onChanged: widget.onPerformanceHudChanged,
   );
@@ -483,10 +438,10 @@ class _HamburgerMenuState extends State<HamburgerMenu>
       ),
       const SizedBox(width: 10),
       Expanded(
-        child: FilledButton.tonalIcon(
+        child: OutlinedButton.icon(
           onPressed: widget.onSaveImage,
           icon: const Icon(Icons.download),
-          label: const Text('Save PNG'),
+          label: const Text('Save'),
         ),
       ),
     ],
