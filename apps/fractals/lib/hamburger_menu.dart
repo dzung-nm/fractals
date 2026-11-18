@@ -185,7 +185,7 @@ class _HamburgerMenuState extends State<HamburgerMenu>
                     const SizedBox(height: 24),
                     _label('DISPLAY', scheme),
                     _performanceHud(),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                     _label('ACTIONS', scheme),
                     const SizedBox(height: 8),
                     _actions(),
