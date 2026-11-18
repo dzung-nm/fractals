@@ -346,29 +346,9 @@ class _HamburgerMenuState extends State<HamburgerMenu>
         max: (_iterationSteps.length - 1).toDouble(),
         divisions: _iterationSteps.length - 1,
         value: _iterationIndex.toDouble(),
-        label: '${widget.maxIterations}',
         onChanged: (value) =>
             widget.onMaxIterationsChanged(_iterationSteps[value.round()]),
-      ),
-      Row(
-        children: List.generate(
-          _iterationSteps.length,
-          (index) => Expanded(
-            child: InkWell(
-              borderRadius: BorderRadius.circular(6),
-              onTap: () =>
-                  widget.onMaxIterationsChanged(_iterationSteps[index]),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Text(
-                  '${_iterationSteps[index]}',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-              ),
-            ),
-          ),
-        ),
+        padding: const EdgeInsets.only(top: 8),
       ),
     ],
   );
