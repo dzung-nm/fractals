@@ -201,7 +201,7 @@ class _FractalWidgetState extends State<FractalWidget> {
     try {
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       if (byteData == null) {
-        throw StateError('Could not encode the Mandelbrot image as PNG.');
+        throw StateError('Could not encode the image as PNG.');
       }
 
       final pngBytes = byteData.buffer.asUint8List(
@@ -209,11 +209,11 @@ class _FractalWidgetState extends State<FractalWidget> {
         byteData.lengthInBytes,
       );
       final savedPath = await FileSaver.instance.saveAs(
-        name: 'mandelbrot',
+        name: widget.fractalType.label.toLowerCase(),
         bytes: pngBytes,
         fileExtension: 'png',
         mimeType: MimeType.png,
-        dialogTitle: 'Save Mandelbrot image',
+        dialogTitle: 'Save Fractal Image',
       );
 
       if (!mounted) return;
