@@ -179,6 +179,7 @@ class _HamburgerMenuState extends State<HamburgerMenu>
                     _juliaEditor(scheme),
                     const SizedBox(height: 24),
                     _iterations(scheme),
+                    const SizedBox(height: 24),
                     _label('COLOR PALETTE', scheme),
                     const SizedBox(height: 8),
                     _palettes(),

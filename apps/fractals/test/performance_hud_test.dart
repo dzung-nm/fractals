@@ -38,6 +38,10 @@ Future<void> _openHamburgerMenu(
 
   scaffoldKey.currentState!.openDrawer();
   await tester.pumpAndSettle();
+
+  // Scroll down to ensure all palette options are visible
+  await tester.drag(find.byType(ListView), const Offset(0, -1000));
+  
   await tester.ensureVisible(find.text('Performance HUD'));
   await tester.pumpAndSettle();
 }
