@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:fractals/fractal_widget.dart';
 import 'package:fractals/hamburger_menu.dart';
+import 'package:fractals/main.dart' as app;
 import 'package:fractals_gen/fractals_gen.dart';
 
 Future<void> _openHamburgerMenu(
@@ -61,6 +62,29 @@ void main() {
     await tester.pump();
 
     expect(resetCalled, isTrue);
+  });
+
+  testWidgets('Reset button replaces the FractalWidget key', (tester) async {
+    tester.view.physicalSize = const Size(400, 700);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(const MaterialApp(home: app.HomeScreen()));
+    final oldKey = tester.widget<FractalWidget>(find.byType(FractalWidget)).key;
+
+    final scaffoldState = tester.state<ScaffoldState>(find.byType(Scaffold));
+    scaffoldState.openDrawer();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(scaffoldState.isDrawerOpen, isTrue);
+    await tester.ensureVisible(find.text('Reset'));
+    await tester.pump();
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Reset'));
+    await tester.pump();
+
+    final newKey = tester.widget<FractalWidget>(find.byType(FractalWidget)).key;
+    expect(newKey, isNot(same(oldKey)));
   });
 
   testWidgets('Save button is present in the Hamburger menu', (tester) async {

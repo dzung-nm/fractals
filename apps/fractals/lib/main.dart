@@ -76,7 +76,6 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         onReset: () {
           setState(() {
-            _palette = ColorPalette.inferno;
             _fractalKey = GlobalKey<FractalWidgetState>();
           });
         },
