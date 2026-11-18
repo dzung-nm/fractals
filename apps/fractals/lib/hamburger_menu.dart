@@ -40,8 +40,7 @@ class HamburgerMenu extends StatefulWidget {
   State<HamburgerMenu> createState() => _HamburgerMenuState();
 }
 
-class _HamburgerMenuState extends State<HamburgerMenu>
-    with TickerProviderStateMixin {
+class _HamburgerMenuState extends State<HamburgerMenu> {
   static const _iterationSteps = <int>[100, 200, 300, 400, 500, 600, 700];
   static const _juliaStep = 0.005;
 
@@ -236,48 +235,43 @@ class _HamburgerMenuState extends State<HamburgerMenu>
     ),
   );
 
-  Widget _juliaEditor(ColorScheme scheme) => AnimatedSize(
-    duration: const Duration(milliseconds: 220),
-    curve: Curves.easeInOut,
-    child: widget.selectedFractal != FractalType.julia
-        ? const SizedBox.shrink()
-        : Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: Card(
-              margin: EdgeInsets.zero,
-              color: scheme.surfaceContainerLow,
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _label('JULIA CONSTANT (C)', scheme),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _juliaField('Real', _juliaCReController),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: _juliaField('Imaginary', _juliaCImController),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton(
-                        onPressed: _updateJulia,
-                        child: const Text('UPDATE'),
+  Widget _juliaEditor(ColorScheme scheme) =>
+      widget.selectedFractal != FractalType.julia
+      ? const SizedBox.shrink()
+      : Padding(
+          padding: const EdgeInsets.only(top: 16),
+          child: Card(
+            margin: EdgeInsets.zero,
+            color: scheme.surfaceContainerLow,
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _label('JULIA CONSTANT (C)', scheme),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(child: _juliaField('Real', _juliaCReController)),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _juliaField('Imaginary', _juliaCImController),
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: _updateJulia,
+                      child: const Text('UPDATE'),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
-  );
+        );
 
   Widget _juliaField(String label, TextEditingController controller) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,42 +356,46 @@ class _HamburgerMenuState extends State<HamburgerMenu>
           selected: selected,
           button: true,
           label: '${palette.label} color palette',
-          child: InkWell(
+          child: Material(
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(12),
-            onTap: () => widget.onPaletteChanged(palette),
-            child: Ink(
-              height: 40,
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                gradient: _paletteGradient(palette),
-                border: Border.all(
-                  color: selected
-                      ? Colors.white
-                      : Colors.white.withValues(alpha: .16),
-                  width: selected ? 2 : 1,
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () => widget.onPaletteChanged(palette),
+              child: Ink(
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: _paletteGradient(palette),
+                  border: Border.all(
+                    color: selected
+                        ? Colors.white
+                        : Colors.white.withValues(alpha: .16),
+                    width: selected ? 2 : 1,
+                  ),
                 ),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      palette.label,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black87,
-                            blurRadius: 5,
-                            offset: Offset(0, 1),
-                          ),
-                        ],
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        palette.label,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black87,
+                              blurRadius: 5,
+                              offset: Offset(0, 1),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  if (selected) const Icon(Icons.check, color: Colors.white),
-                ],
+                    if (selected) const Icon(Icons.check, color: Colors.white),
+                  ],
+                ),
               ),
             ),
           ),
