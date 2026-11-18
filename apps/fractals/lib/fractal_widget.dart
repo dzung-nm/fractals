@@ -336,6 +336,7 @@ class _FractalWidgetState extends State<FractalWidget> {
 
   Widget _buildPerformanceHud() {
     return DecoratedBox(
+      key: const ValueKey('performance_hud'),
       decoration: BoxDecoration(
         color: const Color.fromRGBO(0, 0, 0, 0.40),
         borderRadius: BorderRadius.circular(8),
