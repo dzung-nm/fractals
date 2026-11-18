@@ -167,30 +167,35 @@ class _HamburgerMenuState extends State<HamburgerMenu>
       ),
       child: Drawer(
         child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
             children: [
-              const SizedBox(height: 24),
-              _label('FRACTAL TYPE', scheme),
-              const SizedBox(height: 8),
-              _fractalTypes(scheme),
-              _juliaEditor(scheme),
-              const SizedBox(height: 24),
-              _iterations(scheme),
-              _label('COLOR PALETTE', scheme),
-              const SizedBox(height: 8),
-              _palettes(),
-              const SizedBox(height: 24),
-              _label('DISPLAY', scheme),
-              _performanceHud(),
-              const SizedBox(height: 20),
-
-              _label('ACTIONS', scheme),
-              const SizedBox(height: 8),
-              _actions(),
-
-              _exitButton(scheme),
-              const SizedBox(height: 24),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
+                  children: [
+                    _label('FRACTAL TYPE', scheme),
+                    const SizedBox(height: 8),
+                    _fractalTypes(scheme),
+                    _juliaEditor(scheme),
+                    const SizedBox(height: 24),
+                    _iterations(scheme),
+                    _label('COLOR PALETTE', scheme),
+                    const SizedBox(height: 8),
+                    _palettes(),
+                    const SizedBox(height: 24),
+                    _label('DISPLAY', scheme),
+                    _performanceHud(),
+                    const SizedBox(height: 20),
+                    _label('ACTIONS', scheme),
+                    const SizedBox(height: 8),
+                    _actions(),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                child: _exitButton(scheme),
+              ),
             ],
           ),
         ),

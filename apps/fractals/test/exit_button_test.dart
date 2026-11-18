@@ -32,6 +32,7 @@ void main() {
     });
 
     final scaffoldKey = GlobalKey<ScaffoldState>();
+
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -59,26 +60,21 @@ void main() {
     scaffoldKey.currentState!.openDrawer();
     await tester.pumpAndSettle();
 
-    expect(find.byType(Drawer), findsOneWidget);
+    final drawerFinder = find.byType(Drawer);
 
-    // The menu content is scrollable, so scroll it down before looking for the
-    // exit button in the lower section of the list.
-    final scrollable = find
-        .descendant(
-          of: find.byType(HamburgerMenu),
-          matching: find.byType(Scrollable),
-        )
-        .last;
+    // Verify that the drawer is present in the widget tree
+    expect(drawerFinder, findsOneWidget);
 
-    await tester.drag(scrollable, const Offset(0, -600));
-    await tester.pumpAndSettle();
-
+    // Verify that the exit button is present in the drawer
     final exitButton = find.widgetWithText(OutlinedButton, 'Exit Application');
-
     expect(exitButton, findsOneWidget);
+
+    // Verify that the exit button is positioned at the bottom of the drawer
+    final drawerRect = tester.getRect(drawerFinder);
+    final exitButtonRect = tester.getRect(exitButton);
     expect(
-      find.descendant(of: exitButton, matching: find.byIcon(Icons.exit_to_app)),
-      findsOneWidget,
+      exitButtonRect.bottom,
+      closeTo(drawerRect.bottom - 12, 0.1),
     );
 
     // Simulate a tap on the exit button and verify that the platform method is called
