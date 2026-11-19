@@ -212,6 +212,16 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
     ),
   );
 
+  Widget _subLabel(String text, ColorScheme scheme) => Text(
+    text,
+    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+      letterSpacing: 1.2,
+      fontWeight: FontWeight.w500,
+      color: scheme.onSurfaceVariant,
+      fontSize: 12,
+    ),
+  );
+
   Widget _fractalTypes(ColorScheme scheme) => SingleChildScrollView(
     scrollDirection: Axis.horizontal,
     child: Row(
@@ -250,16 +260,14 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
                 children: [
                   _label('JULIA CONSTANT (C)', scheme),
                   const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(child: _juliaField('Real', _juliaCReController)),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _juliaField('Imaginary', _juliaCImController),
-                      ),
-                    ],
-                  ),
+                  _subLabel('Real', scheme),
+                  const SizedBox(height: 6),
+                  _juliaField('Real', _juliaCReController),
                   const SizedBox(height: 12),
+                  _subLabel('Imaginary', scheme),
+                  const SizedBox(height: 6),
+                  _juliaField('Imaginary', _juliaCImController),
+                  const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
                     child: FilledButton(
@@ -273,41 +281,35 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
           ),
         );
 
-  Widget _juliaField(String label, TextEditingController controller) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _juliaField(String label, TextEditingController controller) => Row(
     children: [
-      Text(label, style: Theme.of(context).textTheme.labelMedium),
-      const SizedBox(height: 5),
-      Row(
-        children: [
-          IconButton.filledTonal(
-            visualDensity: VisualDensity.compact,
-            tooltip: 'Decrease $label',
-            onPressed: () => _adjustJulia(controller, -_juliaStep),
-            icon: const Icon(Icons.remove, size: 16),
+      IconButton.filledTonal(
+        visualDensity: VisualDensity.compact,
+        tooltip: 'Decrease $label',
+        onPressed: () => _adjustJulia(controller, -_juliaStep),
+        icon: const Icon(Icons.remove, size: 16),
+      ),
+      const SizedBox(width: 4),
+      SizedBox(
+        width: 100,
+        child: TextField(
+          controller: controller,
+          textAlign: TextAlign.center,
+          keyboardType: const TextInputType.numberWithOptions(
+            decimal: true,
+            signed: true,
           ),
-          const SizedBox(width: 4),
-          Expanded(
-            child: TextField(
-              controller: controller,
-              textAlign: TextAlign.center,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-                signed: true,
-              ),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[-0-9.]')),
-              ],
-            ),
-          ),
-          const SizedBox(width: 4),
-          IconButton.filledTonal(
-            visualDensity: VisualDensity.compact,
-            tooltip: 'Increase $label',
-            onPressed: () => _adjustJulia(controller, _juliaStep),
-            icon: const Icon(Icons.add, size: 16),
-          ),
-        ],
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp(r'[-0-9.]')),
+          ],
+        ),
+      ),
+      const SizedBox(width: 4),
+      IconButton.filledTonal(
+        visualDensity: VisualDensity.compact,
+        tooltip: 'Increase $label',
+        onPressed: () => _adjustJulia(controller, _juliaStep),
+        icon: const Icon(Icons.add, size: 16),
       ),
     ],
   );
