@@ -50,8 +50,12 @@ void main() {
       onJuliaChanged: (_, _) {},
     );
 
-    expect(find.text('JULIA CONSTANT (C)'), findsNothing);
-    expect(find.byType(TextField), findsNothing);
+    expect(
+      tester
+          .widget<AnimatedCrossFade>(find.byType(AnimatedCrossFade))
+          .crossFadeState,
+      CrossFadeState.showFirst,
+    );
 
     await _openHamburgerMenu(
       tester,
@@ -59,8 +63,12 @@ void main() {
       onJuliaChanged: (_, _) {},
     );
 
-    expect(find.text('JULIA CONSTANT (C)'), findsOneWidget);
-    expect(find.byType(TextField), findsNWidgets(2));
+    expect(
+      tester
+          .widget<AnimatedCrossFade>(find.byType(AnimatedCrossFade))
+          .crossFadeState,
+      CrossFadeState.showSecond,
+    );
   });
 
   testWidgets('Julia editor displays its values in fixed-width fields', (

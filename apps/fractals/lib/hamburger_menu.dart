@@ -175,7 +175,22 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
                     _label('FRACTAL TYPE', scheme),
                     const SizedBox(height: 8),
                     _fractalTypes(scheme),
-                    _juliaEditor(scheme),
+                    AnimatedCrossFade(
+                      duration: const Duration(milliseconds: 300),
+                      crossFadeState:
+                          widget.selectedFractal == FractalType.julia
+                          ? CrossFadeState.showSecond
+                          : CrossFadeState.showFirst,
+                      firstChild: const SizedBox(
+                        width: double.infinity,
+                        height: 0,
+                      ),
+                      secondChild: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(0),
+                        child: _juliaEditor(scheme),
+                      ),
+                    ),
                     const SizedBox(height: 24),
                     _iterations(scheme),
                     const SizedBox(height: 24),
@@ -245,41 +260,38 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
     ),
   );
 
-  Widget _juliaEditor(ColorScheme scheme) =>
-      widget.selectedFractal != FractalType.julia
-      ? const SizedBox.shrink()
-      : Padding(
-          padding: const EdgeInsets.only(top: 16),
-          child: Card(
-            margin: EdgeInsets.zero,
-            color: scheme.surfaceContainerLow,
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _label('JULIA CONSTANT (C)', scheme),
-                  const SizedBox(height: 12),
-                  _subLabel('Real', scheme),
-                  const SizedBox(height: 6),
-                  _juliaField('Real', _juliaCReController),
-                  const SizedBox(height: 12),
-                  _subLabel('Imaginary', scheme),
-                  const SizedBox(height: 6),
-                  _juliaField('Imaginary', _juliaCImController),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton(
-                      onPressed: _updateJulia,
-                      child: const Text('UPDATE'),
-                    ),
-                  ),
-                ],
+  Widget _juliaEditor(ColorScheme scheme) => Padding(
+    padding: const EdgeInsets.only(top: 16),
+    child: Card(
+      margin: EdgeInsets.zero,
+      color: scheme.surfaceContainerLow,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _label('JULIA CONSTANT (C)', scheme),
+            const SizedBox(height: 12),
+            _subLabel('Real', scheme),
+            const SizedBox(height: 6),
+            _juliaField('Real', _juliaCReController),
+            const SizedBox(height: 12),
+            _subLabel('Imaginary', scheme),
+            const SizedBox(height: 6),
+            _juliaField('Imaginary', _juliaCImController),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: _updateJulia,
+                child: const Text('UPDATE'),
               ),
             ),
-          ),
-        );
+          ],
+        ),
+      ),
+    ),
+  );
 
   Widget _juliaField(String label, TextEditingController controller) => Row(
     children: [
