@@ -245,6 +245,7 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
             (type) => Padding(
               padding: const EdgeInsets.only(right: 8),
               child: ChoiceChip(
+                showCheckmark: false,
                 label: Text(type.label),
                 selected: type == widget.selectedFractal,
                 onSelected: (_) => widget.onFractalChanged(type),
