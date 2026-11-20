@@ -42,7 +42,7 @@ Future<void> _openHamburgerMenu(
 
   // Scroll down to ensure all palette options are visible
   await tester.drag(find.byType(ListView), const Offset(0, -1000));
-  
+
   await tester.pumpAndSettle();
 }
 
@@ -65,6 +65,17 @@ void main() {
     await tester.pump();
 
     expect(resetCalled, isTrue);
+  });
+
+  testWidgets('Reset button closes the Hamburger menu', (tester) async {
+    await _openHamburgerMenu(tester, onReset: () {}, onSaveImage: () {});
+    final scaffoldState = tester.state<ScaffoldState>(find.byType(Scaffold));
+
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Reset'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(scaffoldState.isDrawerOpen, isFalse);
   });
 
   testWidgets('Reset button replaces the FractalWidget key', (tester) async {
@@ -108,5 +119,19 @@ void main() {
     await tester.pump();
 
     expect(saveCalled, isTrue);
+  });
+
+  // This test ensures that tapping the "Save" button closes the Hamburger menu, 
+  // similar to the "Reset" button behavior. This behavior allows users to see 
+  // the snackbar notification after saving an image
+  testWidgets('Save button closes the Hamburger menu', (tester) async {
+    await _openHamburgerMenu(tester, onReset: () {}, onSaveImage: () {});
+    final scaffoldState = tester.state<ScaffoldState>(find.byType(Scaffold));
+
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Save'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(scaffoldState.isDrawerOpen, isFalse);
   });
 }

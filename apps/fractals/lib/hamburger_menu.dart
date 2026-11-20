@@ -426,11 +426,16 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
     onChanged: widget.onPerformanceHudChanged,
   );
 
+  void _closeDrawerAndRun(VoidCallback callback) {
+    Scaffold.of(context).closeDrawer();
+    callback();
+  }
+
   Widget _actions() => Row(
     children: [
       Expanded(
         child: OutlinedButton.icon(
-          onPressed: widget.onReset,
+          onPressed: () => _closeDrawerAndRun(widget.onReset),
           icon: const Icon(Icons.refresh),
           label: const Text('Reset'),
         ),
@@ -438,7 +443,7 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
       const SizedBox(width: 10),
       Expanded(
         child: OutlinedButton.icon(
-          onPressed: widget.onSaveImage,
+          onPressed: () => _closeDrawerAndRun(widget.onSaveImage),
           icon: const Icon(Icons.download),
           label: const Text('Save'),
         ),
