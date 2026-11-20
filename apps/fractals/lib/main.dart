@@ -106,13 +106,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   showPerformanceHud: _showPerformanceHud,
                 ),
               ),
-              Positioned(
-                top: 20,
-                left: 20,
-                child: IconButton(
-                  icon: const Icon(Icons.menu),
-                  color: Colors.white.withValues(alpha: 0.5),
-                  onPressed: () => Scaffold.of(context).openDrawer(),
+              Positioned.fill(
+                child: SafeArea(
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 25, top: 0),
+                      child: IconButton(
+                        icon: const Icon(Icons.menu),
+                        color: Colors.white.withValues(alpha: 0.5),
+                        onPressed: () => Scaffold.of(context).openDrawer(),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],
