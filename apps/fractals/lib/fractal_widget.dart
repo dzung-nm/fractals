@@ -4,7 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:fractals_gen/fractals_gen.dart';
 
 import 'image_painter.dart';
