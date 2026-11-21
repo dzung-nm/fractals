@@ -63,6 +63,8 @@ void main() {
 
     await tester.tap(find.widgetWithText(OutlinedButton, 'Reset'));
     await tester.pump();
+    // Important: in the function _closeDrawerAndRun, we have a delay 150 miliseconds
+    await tester.pump(const Duration(milliseconds: 150));
 
     expect(resetCalled, isTrue);
   });
@@ -96,6 +98,8 @@ void main() {
     await tester.pump();
     await tester.tap(find.widgetWithText(OutlinedButton, 'Reset'));
     await tester.pump();
+    // Important: in the function _closeDrawerAndRun, we have a delay 150 miliseconds
+    await tester.pump(const Duration(milliseconds: 150));
 
     final newKey = tester.widget<FractalWidget>(find.byType(FractalWidget)).key;
     expect(newKey, isNot(same(oldKey)));
@@ -117,12 +121,14 @@ void main() {
 
     await tester.tap(find.widgetWithText(OutlinedButton, 'Save'));
     await tester.pump();
+    // Important: in the function _closeDrawerAndRun, we have a delay 150 miliseconds
+    await tester.pump(const Duration(milliseconds: 150));
 
     expect(saveCalled, isTrue);
   });
 
-  // This test ensures that tapping the "Save" button closes the Hamburger menu, 
-  // similar to the "Reset" button behavior. This behavior allows users to see 
+  // This test ensures that tapping the "Save" button closes the Hamburger menu,
+  // similar to the "Reset" button behavior. This behavior allows users to see
   // the snackbar notification after saving an image
   testWidgets('Save button closes the Hamburger menu', (tester) async {
     await _openHamburgerMenu(tester, onReset: () {}, onSaveImage: () {});

@@ -432,8 +432,9 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
     onChanged: widget.onPerformanceHudChanged,
   );
 
-  void _closeDrawerAndRun(VoidCallback callback) {
+  void _closeDrawerAndRun(VoidCallback callback) async {
     Scaffold.of(context).closeDrawer();
+    await Future.delayed(const Duration(milliseconds: 150));
     callback();
   }
 
