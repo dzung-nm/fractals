@@ -208,6 +208,7 @@ class _FractalWidgetState extends State<FractalWidget> {
         byteData.offsetInBytes,
         byteData.lengthInBytes,
       );
+
       final savedPath = await FileSaver.instance.saveAs(
         name: widget.fractalType.label.toLowerCase(),
         bytes: pngBytes,
@@ -216,12 +217,10 @@ class _FractalWidgetState extends State<FractalWidget> {
         dialogTitle: 'Save Fractal Image',
       );
 
-      if (!mounted) return;
-      final message = savedPath == null
-          ? 'Image save canceled.'
-          : 'Image saved: $savedPath';
+      if (!mounted || savedPath == null) return;
+
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(message)));
+          .showSnackBar(SnackBar(content: Text('Image saved: $savedPath')));
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -239,7 +238,7 @@ class _FractalWidgetState extends State<FractalWidget> {
     final scale = 2;
     final width = widget.width * scale;
     final height = widget.height * scale;
-    
+
     final maxIter = _maxIter;
     final centerX = _centerX;
     final centerY = _centerY;
