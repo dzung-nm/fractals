@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:fractals_gen/fractals_gen.dart';
 
@@ -91,6 +92,10 @@ class _HomeScreenState extends State<HomeScreen> {
             return const SizedBox.shrink();
           }
 
+          final isMobilePlatform =
+              defaultTargetPlatform == TargetPlatform.android ||
+              defaultTargetPlatform == TargetPlatform.iOS;
+
           return Stack(
             children: [
               Positioned.fill(
@@ -111,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Align(
                     alignment: Alignment.topLeft,
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 25, top: 0),
+                      padding: EdgeInsets.only(left: 25, top: isMobilePlatform ? 0 : 20),
                       child: IconButton(
                         icon: const Icon(Icons.menu),
                         color: Colors.white.withValues(alpha: 0.5),
