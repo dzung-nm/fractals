@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:fractals_gen/fractals_gen.dart';
@@ -46,6 +47,10 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
 
   late final TextEditingController _juliaCReController;
   late final TextEditingController _juliaCImController;
+
+  bool get _isMobilePlatform =>
+      defaultTargetPlatform == TargetPlatform.android ||
+      defaultTargetPlatform == TargetPlatform.iOS;
 
   @override
   void initState() {
@@ -207,10 +212,11 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-                child: _exitButton(scheme),
-              ),
+              if (!_isMobilePlatform)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                  child: _exitButton(scheme),
+                ),
             ],
           ),
         ),

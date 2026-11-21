@@ -6,6 +6,37 @@ import 'package:fractals/fractal_widget.dart';
 import 'package:fractals/hamburger_menu.dart';
 import 'package:fractals_gen/fractals_gen.dart';
 
+Future<void> _openHamburgerMenu(WidgetTester tester) async {
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Scaffold(
+        key: scaffoldKey,
+        drawer: HamburgerMenu(
+          selectedFractal: FractalType.mandelbrot,
+          selectedPalette: ColorPalette.inferno,
+          maxIterations: 300,
+          juliaCRe: -0.5125,
+          juliaCIm: 0.5213,
+          showPerformanceHud: true,
+          onFractalChanged: (_) {},
+          onPaletteChanged: (_) {},
+          onMaxIterationsChanged: (_) {},
+          onJuliaChanged: (_, _) {},
+          onPerformanceHudChanged: (_) {},
+          onReset: () {},
+          onSaveImage: () {},
+        ),
+        body: const SizedBox.shrink(),
+      ),
+    ),
+  );
+
+  scaffoldKey.currentState!.openDrawer();
+  await tester.pumpAndSettle();
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -31,34 +62,7 @@ void main() {
       );
     });
 
-    final scaffoldKey = GlobalKey<ScaffoldState>();
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          key: scaffoldKey,
-          drawer: HamburgerMenu(
-            selectedFractal: FractalType.mandelbrot,
-            selectedPalette: ColorPalette.inferno,
-            maxIterations: 300,
-            juliaCRe: -0.5125,
-            juliaCIm: 0.5213,
-            showPerformanceHud: true,
-            onFractalChanged: (_) {},
-            onPaletteChanged: (_) {},
-            onMaxIterationsChanged: (_) {},
-            onJuliaChanged: (_, _) {},
-            onPerformanceHudChanged: (_) {},
-            onReset: () {},
-            onSaveImage: () {},
-          ),
-          body: const SizedBox.shrink(),
-        ),
-      ),
-    );
-
-    scaffoldKey.currentState!.openDrawer();
-    await tester.pumpAndSettle();
+    await _openHamburgerMenu(tester);
 
     final drawerFinder = find.byType(Drawer);
 
@@ -72,10 +76,7 @@ void main() {
     // Verify that the exit button is positioned at the bottom of the drawer
     final drawerRect = tester.getRect(drawerFinder);
     final exitButtonRect = tester.getRect(exitButton);
-    expect(
-      exitButtonRect.bottom,
-      closeTo(drawerRect.bottom - 12, 0.1),
-    );
+    expect(exitButtonRect.bottom, closeTo(drawerRect.bottom - 12, 0.1));
 
     // Simulate a tap on the exit button and verify that the platform method is called
     await tester.tap(exitButton);
@@ -85,5 +86,20 @@ void main() {
       platformCalls.map((call) => call.method),
       contains('SystemNavigator.pop'),
     );
-  });
+  }, variant: TargetPlatformVariant.desktop());
+
+  testWidgets(
+    'exit button is hidden on Android and iOS',
+    (tester) async {
+      await _openHamburgerMenu(tester);
+      expect(
+        find.widgetWithText(OutlinedButton, 'Exit Application'),
+        findsNothing,
+      );
+    },
+    variant: const TargetPlatformVariant(<TargetPlatform>{
+      TargetPlatform.android,
+      TargetPlatform.iOS,
+    }),
+  );
 }
