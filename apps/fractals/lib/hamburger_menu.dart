@@ -212,7 +212,7 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
                   ],
                 ),
               ),
-              if (!_isMobilePlatform)
+              if (!_isMobilePlatform && !kIsWeb)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                   child: _exitButton(scheme),

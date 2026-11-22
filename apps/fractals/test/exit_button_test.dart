@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -40,9 +41,19 @@ Future<void> _openHamburgerMenu(WidgetTester tester) async {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('exit button requests the platform to close the application', (
+  testWidgets('exit button closes desktop app and is hidden on web', (
     tester,
   ) async {
+    await _openHamburgerMenu(tester);
+
+    if (kIsWeb) {
+      expect(
+        find.widgetWithText(OutlinedButton, 'Exit Application'),
+        findsNothing,
+      );
+      return;
+    }
+
     final platformCalls = <MethodCall>[];
 
     // Mock the platform channel to capture method calls made to it
@@ -61,8 +72,6 @@ void main() {
         null,
       );
     });
-
-    await _openHamburgerMenu(tester);
 
     final drawerFinder = find.byType(Drawer);
 
@@ -86,6 +95,16 @@ void main() {
       platformCalls.map((call) => call.method),
       contains('SystemNavigator.pop'),
     );
+  }, variant: TargetPlatformVariant.desktop());
+
+  testWidgets('exit button is hidden on web', (tester) async {
+    await _openHamburgerMenu(tester);
+    if (kIsWeb) {
+      expect(
+        find.widgetWithText(OutlinedButton, 'Exit Application'),
+        findsNothing,
+      );
+    }
   }, variant: TargetPlatformVariant.desktop());
 
   testWidgets(
