@@ -93,9 +93,44 @@ void main() {
 
     expect(
       platformCalls.map((call) => call.method),
-      contains('SystemNavigator.pop'),
+      contains('System.exitApplication'),
     );
   }, variant: TargetPlatformVariant.desktop());
+
+  testWidgets(
+    'exit button requests application exit on Windows',
+    (tester) async {
+      await _openHamburgerMenu(tester);
+
+      final platformCalls = <MethodCall>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (call) async {
+          platformCalls.add(call);
+          return <String, Object?>{'response': 'exit'};
+        },
+      );
+      addTearDown(() {
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        );
+      });
+
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Exit Application'));
+      await tester.pump();
+
+      expect(platformCalls, hasLength(1));
+      expect(platformCalls.single.method, 'System.exitApplication');
+      expect(platformCalls.single.arguments, {
+        'type': 'required',
+        'exitCode': 0,
+      });
+    },
+    variant: const TargetPlatformVariant(<TargetPlatform>{
+      TargetPlatform.windows,
+    }),
+  );
 
   testWidgets('exit button is hidden on web', (tester) async {
     await _openHamburgerMenu(tester);

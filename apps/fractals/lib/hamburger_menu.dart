@@ -461,7 +461,10 @@ class _HamburgerMenuState extends State<HamburgerMenu> {
   Widget _exitButton(ColorScheme scheme) => SizedBox(
     width: double.infinity,
     child: OutlinedButton.icon(
-      onPressed: SystemNavigator.pop,
+      onPressed: () => SystemChannels.platform.invokeMethod<void>(
+        'System.exitApplication',
+        <String, Object>{'type': 'required', 'exitCode': 0},
+      ),
       icon: const Icon(Icons.exit_to_app),
       label: const Text('Exit Application'),
       style: OutlinedButton.styleFrom(
