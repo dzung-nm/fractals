@@ -21,6 +21,11 @@ melos:
       melos exec -c 1 --fail-fast --dir-exists=test -- \
         flutter test --no-pub
 
+    docker-check: >
+      docker compose -f docker/docker-compose.yml run --build --rm check-linux &&
+      docker compose -f docker/docker-compose.yml run --build --rm check-android &&
+      docker compose -f docker/docker-compose.yml run --build --rm check-web
+
     # run the main Flutter app in debug mode
     dev: >
       melos exec --scope=fractals -- \

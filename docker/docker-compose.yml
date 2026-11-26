@@ -1,0 +1,42 @@
+name: fractals
+
+x-build: &build
+  context: ..
+  dockerfile: docker/Dockerfile
+
+services:
+  check-linux:
+    build:
+      <<: *build
+      args:
+        FLUTTER_IMAGE: ghcr.io/gmeligio/flutter-linux:3.50.1
+    image: fractals-check-linux
+    platform: linux/amd64
+    command:
+      - sh
+      - -c
+      - >-
+        melos run test &&
+        cd apps/fractals &&
+        flutter config --enable-linux-desktop &&
+        flutter build linux --release
+
+  check-android:
+    build:
+      <<: *build
+      args:
+        FLUTTER_IMAGE: docker.io/gmeligio/flutter-android:3.50.0
+    image: fractals-check-android
+    platform: linux/amd64
+    working_dir: /workspace/apps/fractals
+    command: flutter build apk --release
+
+  check-web:
+    build:
+      <<: *build
+      args:
+        FLUTTER_IMAGE: docker.io/gmeligio/flutter-web:3.50.0
+    image: fractals-check-web
+    platform: linux/amd64
+    working_dir: /workspace/apps/fractals
+    command: flutter build web --release

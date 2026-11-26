@@ -1,0 +1,16 @@
+# Local cache and build artifacts from the host machine (prevents symlink/path conflicts in Linux containers)
+**/.dart_tool
+**/build
+.melos_tool
+
+# IDE, macOS, and Git metadata
+.git
+.gitignore
+.idea
+.vscode
+*.iml
+.DS_Store
+
+# Logs and test coverage reports
+*.log
+coverage/
