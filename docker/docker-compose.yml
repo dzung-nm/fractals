@@ -29,6 +29,10 @@ services:
     image: fractals-check-android
     platform: linux/amd64
     working_dir: /workspace/apps/fractals
+    # Preserve Gradle and Android SDK caches across --rm runs.
+    volumes:
+      - gradle-cache:/home/flutter/.gradle
+      - android-sdk:/home/flutter/sdks/android-sdk
     command: flutter build apk --release
 
   check-web:
@@ -39,4 +43,10 @@ services:
     image: fractals-check-web
     platform: linux/amd64
     working_dir: /workspace/apps/fractals
-    command: flutter build web --release
+    # Fixed warning: Wasm dry run succeeded. Consider building and testing 
+    # your application with the `--wasm` flag
+    command: flutter build web --release --wasm
+
+volumes:
+  gradle-cache:
+  android-sdk:
