@@ -21,7 +21,14 @@ melos:
       melos exec -c 1 --fail-fast --dir-exists=test -- \
         flutter test --no-pub
 
+    # Check building on linux, android, web (WebAssembly)
     docker-check: >
+      docker compose -f docker/docker-compose.yml run --rm check-linux &&
+      docker compose -f docker/docker-compose.yml run --rm check-android &&
+      docker compose -f docker/docker-compose.yml run --rm check-web
+
+    # Build service images before starting the check containers.
+    docker-check-build: >
       docker compose -f docker/docker-compose.yml run --build --rm check-linux &&
       docker compose -f docker/docker-compose.yml run --build --rm check-android &&
       docker compose -f docker/docker-compose.yml run --build --rm check-web

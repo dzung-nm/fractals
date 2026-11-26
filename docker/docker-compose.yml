@@ -12,12 +12,11 @@ services:
         FLUTTER_IMAGE: ghcr.io/gmeligio/flutter-linux:3.50.1
     image: fractals-check-linux
     platform: linux/amd64
+    working_dir: /workspace/apps/fractals
     command:
       - sh
       - -c
       - >-
-        melos run test &&
-        cd apps/fractals &&
         flutter config --enable-linux-desktop &&
         flutter build linux --release
 
