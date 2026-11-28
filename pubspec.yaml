@@ -1,4 +1,5 @@
 name: fractals_workspace
+repository: https://github.com/dzung-nm/fractals
 publish_to: none
 
 environment:

@@ -115,3 +115,13 @@ melos run test
 ```
 
 The app tests cover menu interactions, palette selection, iteration controls, Julia parameters, performance display, action buttons, and image rendering behavior.
+
+## GitHub Pages
+
+The web app is deployed automatically from `main` to GitHub Pages.
+
+- Live app: https://dzung-nm.github.io/fractals/
+- Workflow: `.github/workflows/deploy-web.yml`
+
+The repository must use **GitHub Actions** as its Pages build source under
+**Settings > Pages**.

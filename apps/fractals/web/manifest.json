@@ -1,11 +1,11 @@
 {
-    "name": "fractals",
-    "short_name": "fractals",
+    "name": "Fractals",
+    "short_name": "Fractals",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Interactive Mandelbrot and Julia fractal explorer.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
