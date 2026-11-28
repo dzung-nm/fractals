@@ -116,7 +116,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Align(
                     alignment: Alignment.topLeft,
                     child: Padding(
-                      padding: EdgeInsets.only(left: 25, top: isMobilePlatform ? 0 : 20),
+                      padding: EdgeInsets.only(
+                        left: 25,
+                        top: isMobilePlatform ? 0 : 20,
+                      ),
                       child: IconButton(
                         icon: const Icon(Icons.menu),
                         color: Colors.white.withValues(alpha: 0.5),

@@ -41,7 +41,7 @@ Future<void> _openHamburgerMenu(
 
   // Scroll down to ensure all palette options are visible
   await tester.drag(find.byType(ListView), const Offset(0, -1000));
-  
+
   await tester.ensureVisible(find.byType(Slider));
   await tester.pumpAndSettle();
 }
