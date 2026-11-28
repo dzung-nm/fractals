@@ -1,10 +1,11 @@
 name: Deploy web app to GitHub Pages
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Source CI
+    types:
+      - completed
 
 permissions:
   contents: read
@@ -17,10 +18,15 @@ concurrency:
 
 jobs:
   build:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2

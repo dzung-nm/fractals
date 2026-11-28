@@ -118,7 +118,8 @@ The app tests cover menu interactions, palette selection, iteration controls, Ju
 
 ## GitHub Pages
 
-The web app is deployed automatically from `main` to GitHub Pages.
+The web app is deployed automatically to GitHub Pages after **Source CI**
+completes successfully for `main`.
 
 - Live app: https://dzung-nm.github.io/fractals/
 - Workflow: `.github/workflows/deploy-web.yml`
