@@ -19,7 +19,7 @@ melos:
 
     # run tests in all packages
     test: >
-      melos exec -c 1 --fail-fast --dir-exists=test -- \
+      dart run melos exec -c 1 --fail-fast --dir-exists=test -- \
         flutter test --no-pub
 
     # Check building on linux, android, web (WebAssembly)
@@ -36,5 +36,5 @@ melos:
 
     # run the main Flutter app in debug mode
     dev: >
-      melos exec --scope=fractals -- \
+      dart run melos exec --scope=fractals -- \
         flutter run -d macos --no-pub
